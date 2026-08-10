@@ -17,6 +17,8 @@ jobs:
       - run: pip install numpy pandas
       - name: Run backtest
         run: python hynix_ci.py
+      - name: Validate July checkpoint
+        run: python checkpoint.py
       - name: Print result files
         run: |
           echo '=== FULL ==='
