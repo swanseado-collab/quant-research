@@ -1,0 +1,35 @@
+name: Hynix complete backtest
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [hynix-v4-complete]
+permissions:
+  contents: read
+jobs:
+  backtest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install numpy pandas
+      - name: Run backtest
+        run: python hynix_ci.py
+      - name: Print result files
+        run: |
+          echo '=== FULL ==='
+          cat results/full.csv
+          echo '=== ANNUAL 3Y ==='
+          cat results/annual_3y.csv
+          echo '=== ANNUAL 5Y ==='
+          cat results/annual_5y.csv
+          echo '=== COST ==='
+          cat results/cost.csv
+          echo '=== CURRENT LIKE ==='
+          cat results/current_like.csv
+      - uses: actions/upload-artifact@v4
+        with:
+          name: hynix-complete-results
+          path: results/
