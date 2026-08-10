@@ -19,6 +19,8 @@ jobs:
         run: python hynix_ci.py
       - name: Validate July checkpoint
         run: python checkpoint.py
+      - name: Diagnose V4 variants
+        run: python diagnose_v4.py
       - name: Print result files
         run: |
           echo '=== FULL ==='
