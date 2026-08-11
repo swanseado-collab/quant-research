@@ -14,28 +14,38 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - run: pip install numpy pandas
+      - run: pip install numpy pandas numba
       - name: Run backtest
         run: python hynix_ci.py
-      - name: Validate July checkpoint
-        run: python checkpoint.py
-      - name: Diagnose V4 variants
-        run: python diagnose_v4.py
-      - name: Compare V4 styles
-        run: python compare_v4_styles.py
-      - name: Print result files
+      - name: Run accumulation strategy grid
+        run: python strategy_grid.py
+      - name: Print grid highlights
         run: |
-          echo '=== FULL ==='
-          cat results/full.csv
-          echo '=== ANNUAL 3Y ==='
-          cat results/annual_3y.csv
-          echo '=== ANNUAL 5Y ==='
-          cat results/annual_5y.csv
-          echo '=== COST ==='
-          cat results/cost.csv
-          echo '=== CURRENT LIKE ==='
-          cat results/current_like.csv
+          echo '=== GRID TOP RETURN ==='
+          python - <<'PY'
+          import pandas as pd
+          d=pd.read_csv('results_grid/all_864_strategies.csv')
+          c=['strategy','med_cagr3','med_cagr5','med_mdd3','med_mdd5','p25_ret3','p25_ret5','loss_rate3','loss_rate5','bh_win_rate3','bh_win_rate5','calmar_like']
+          print(d[d.reserve>0].nlargest(20,'avg_med_cagr')[c].to_csv(index=False))
+          print('=== GRID TOP RISK ADJUSTED ===')
+          print(d[d.reserve>0].nlargest(20,'calmar_like')[c].to_csv(index=False))
+          print('=== HOLD ENTRY COMPARISON ===')
+          h=pd.read_csv('results_grid/entry_reserve_hold_comparison.csv')
+          print(h[['strategy','med_cagr3','med_cagr5','med_mdd3','med_mdd5','loss_rate3','loss_rate5']].to_csv(index=False))
+          print('=== FACTOR EXIT ===')
+          print(pd.read_csv('results_grid/factor_exit.csv').to_csv(index=False))
+          print('=== FACTOR TREND ===')
+          print(pd.read_csv('results_grid/factor_trend.csv').to_csv(index=False))
+          print('=== CURRENT LIKE 3Y ===')
+          q=pd.read_csv('results_grid/current_like_finalist_summary.csv')
+          print(q[q.years==3].sort_values('med_ret',ascending=False).head(20).to_csv(index=False))
+          print('=== REENTRY SENSITIVITY ===')
+          r=pd.read_csv('results_grid/reentry_sensitivity.csv')
+          print(r.sort_values(['strategy','reentry_drop'])[['strategy','reentry_drop','med_cagr3','med_cagr5','med_mdd3','med_mdd5']].to_csv(index=False))
+          PY
       - uses: actions/upload-artifact@v4
         with:
-          name: hynix-complete-results
-          path: results/
+          name: hynix-strategy-grid-results
+          path: |
+            results/
+            results_grid/
