@@ -18,7 +18,7 @@ jobs:
       - name: Run backtest
         run: python hynix_ci.py
       - name: Run accumulation strategy grid
-        run: python strategy_grid.py
+        run: python run_strategy_grid.py
       - name: Print grid highlights
         run: |
           echo '=== GRID TOP RETURN ==='
