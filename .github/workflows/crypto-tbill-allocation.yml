@@ -1,0 +1,21 @@
+name: Crypto TBill Allocation
+on:
+  push:
+    branches: [eth-entry-backtest-20260828]
+    paths:
+      - 'research/crypto_tbill_allocation.py'
+      - '.github/workflows/crypto-tbill-allocation.yml'
+jobs:
+  research:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install pandas numpy requests tabulate
+      - run: python research/crypto_tbill_allocation.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: crypto-tbill-allocation-results
+          path: results/crypto_tbill_allocation/
