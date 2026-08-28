@@ -1,0 +1,21 @@
+name: ETH Upbit Validation
+on:
+  push:
+    branches: [eth-entry-backtest-20260828]
+    paths:
+      - 'research/eth_upbit_validation.py'
+      - '.github/workflows/eth-upbit-validation.yml'
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install pandas numpy requests tabulate
+      - run: python research/eth_upbit_validation.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: eth-upbit-validation-results
+          path: results/eth_upbit_validation/
