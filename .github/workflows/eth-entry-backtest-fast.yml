@@ -1,0 +1,27 @@
+name: ETH Entry Backtest Fast
+
+on:
+  push:
+    branches:
+      - eth-entry-backtest-20260828
+    paths:
+      - 'research/eth_entry_grid_fast.py'
+      - '.github/workflows/eth-entry-backtest-fast.yml'
+  workflow_dispatch:
+
+jobs:
+  backtest-fast:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install pandas numpy requests tabulate
+      - run: python research/eth_entry_grid_fast.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: eth-entry-grid-fast-results
+          path: results/eth_entry_grid_fast/
+          if-no-files-found: error
