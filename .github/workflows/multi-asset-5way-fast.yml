@@ -1,0 +1,22 @@
+name: Five Asset Allocation Fast
+on:
+  push:
+    branches: [eth-entry-backtest-20260828]
+    paths:
+      - 'research/multi_asset_5way_fast.py'
+      - '.github/workflows/multi-asset-5way-fast.yml'
+jobs:
+  research:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install pandas numpy requests tabulate yfinance
+      - run: python research/multi_asset_5way_fast.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: multi-asset-5way-fast-results
+          path: results/multi_asset_5way_fast/
