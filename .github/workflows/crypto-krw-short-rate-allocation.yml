@@ -1,0 +1,21 @@
+name: Crypto KRW Short Rate Allocation
+on:
+  push:
+    branches: [eth-entry-backtest-20260828]
+    paths:
+      - 'research/crypto_krw_short_rate_allocation.py'
+      - '.github/workflows/crypto-krw-short-rate-allocation.yml'
+jobs:
+  research:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install pandas numpy requests tabulate
+      - run: python research/crypto_krw_short_rate_allocation.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: crypto-krw-short-rate-results
+          path: results/crypto_krw_short_rate_allocation/
