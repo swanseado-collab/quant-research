@@ -1,0 +1,30 @@
+name: ETH Entry Backtest
+
+on:
+  push:
+    branches:
+      - eth-entry-backtest-20260828
+    paths:
+      - 'research/eth_entry_grid.py'
+      - '.github/workflows/eth-entry-backtest.yml'
+  workflow_dispatch:
+
+jobs:
+  backtest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install dependencies
+        run: pip install pandas numpy requests tabulate
+      - name: Run backtest
+        run: python research/eth_entry_grid.py
+      - name: Upload results
+        uses: actions/upload-artifact@v4
+        with:
+          name: eth-entry-grid-results
+          path: results/eth_entry_grid/
+          if-no-files-found: error
