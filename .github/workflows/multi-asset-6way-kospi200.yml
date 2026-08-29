@@ -15,6 +15,18 @@ jobs:
         with:
           python-version: '3.12'
       - run: pip install pandas numpy requests tabulate yfinance
+      - name: Patch matrix orientation
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('research/multi_asset_6way_kospi200_v2.py')
+          s=p.read_text()
+          old="m.tbill_sleeve(d,s,e)])\n        dates="
+          new="m.tbill_sleeve(d,s,e)]).T\n        dates="
+          if old not in s:
+              raise SystemExit('patch target not found')
+          p.write_text(s.replace(old,new,1))
+          PY
       - run: PYTHONPATH=. python research/multi_asset_6way_kospi200_v2.py
       - uses: actions/upload-artifact@v4
         with:
