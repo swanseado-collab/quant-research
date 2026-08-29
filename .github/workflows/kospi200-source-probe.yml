@@ -1,0 +1,26 @@
+name: KOSPI200 Source Probe
+on:
+  push:
+    branches: [eth-entry-backtest-20260828]
+    paths:
+      - .github/workflows/kospi200-source-probe.yml
+  workflow_dispatch:
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install pandas yfinance
+      - run: |
+          python - <<'PY'
+          import yfinance as yf, pandas as pd
+          for t in ['^KS200','KOSPI200.KS','069500.KS']:
+              try:
+                  d=yf.download(t,start='1990-01-01',auto_adjust=False,progress=False,threads=False)
+                  if isinstance(d.columns,pd.MultiIndex): d.columns=d.columns.get_level_values(0)
+                  print(t,'rows',len(d),'start',d.index.min(),'end',d.index.max())
+                  print(d[['Open','Close']].tail(8).to_string())
+              except Exception as e: print(t,'ERROR',repr(e))
+          PY
