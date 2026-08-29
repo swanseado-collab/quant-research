@@ -1,0 +1,23 @@
+name: Execution Domestic Actual Timing Stage3
+on:
+  push:
+    branches: [eth-entry-backtest-20260828]
+    paths:
+      - 'research/execution_domestic_actual_timing_stage3.py'
+      - '.github/workflows/execution-domestic-actual-timing-stage3.yml'
+  workflow_dispatch:
+jobs:
+  research:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install pandas numpy requests tabulate yfinance
+      - run: PYTHONPATH=. python research/execution_domestic_actual_timing_stage3.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: execution-domestic-actual-timing-stage3-results
+          path: results/execution_domestic_actual_timing_stage3
