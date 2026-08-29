@@ -1,0 +1,21 @@
+name: Final Retirement Robust With Gold
+on:
+  push:
+    branches: [eth-entry-backtest-20260828]
+    paths:
+      - 'research/final_retirement_robust_with_gold.py'
+      - '.github/workflows/final-retirement-robust-with-gold.yml'
+jobs:
+  research:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install pandas numpy requests tabulate yfinance
+      - run: PYTHONPATH=. python research/final_retirement_robust_with_gold.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: final-retirement-robust-with-gold-results
+          path: results/final_retirement_robust_with_gold
