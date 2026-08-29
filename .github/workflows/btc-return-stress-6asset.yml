@@ -4,6 +4,7 @@ on:
     branches: [eth-entry-backtest-20260828]
     paths:
       - research/btc_return_stress_6asset.py
+      - research/btc_return_stress_6asset_v2.py
       - .github/workflows/btc-return-stress-6asset.yml
   workflow_dispatch:
 jobs:
@@ -15,7 +16,7 @@ jobs:
         with:
           python-version: '3.12'
       - run: pip install pandas numpy requests tabulate yfinance
-      - run: PYTHONPATH=. python research/btc_return_stress_6asset.py
+      - run: PYTHONPATH=. python research/btc_return_stress_6asset_v2.py
       - uses: actions/upload-artifact@v4
         with:
           name: btc-return-stress-6asset-results
