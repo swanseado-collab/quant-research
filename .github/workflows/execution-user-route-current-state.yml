@@ -1,0 +1,29 @@
+name: Execution User Route Current State
+on:
+  push:
+    branches: [eth-entry-backtest-20260828]
+    paths:
+      - '.github/workflows/execution-user-route-current-state.yml'
+  workflow_dispatch:
+jobs:
+  state:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install pandas numpy requests tabulate yfinance
+      - name: Calculate current states
+        run: |
+          PYTHONPATH=. python - <<'PY'
+          from research import execution_user_route_kofr as x
+          d,_,_=x.v.prepare_data()
+          r=d.iloc[-1]
+          states={'VOO':int(r.spy_state),'QQQM':int(r.qqq_state),'BTC':int(r.btc_state),'RISE200':int(r.k200_state)}
+          target={'VOO':0.15 if states['VOO'] else 0.0,'QQQM':0.15 if states['QQQM'] else 0.0,'BTC':0.35 if states['BTC'] else 0.0,'RISE200':0.20 if states['RISE200'] else 0.0}
+          target['KOFR']=1-sum(target.values())
+          print('DATA_END',r.date)
+          print('STATES',states)
+          print('EXECUTION_TARGET',target)
+          PY
