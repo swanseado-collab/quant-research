@@ -3,7 +3,7 @@ on:
   push:
     branches: [eth-entry-backtest-20260828]
     paths:
-      - research/multi_asset_6way_kospi200.py
+      - research/multi_asset_6way_kospi200_v2.py
       - .github/workflows/multi-asset-6way-kospi200.yml
   workflow_dispatch:
 jobs:
@@ -15,7 +15,7 @@ jobs:
         with:
           python-version: '3.12'
       - run: pip install pandas numpy requests tabulate yfinance
-      - run: PYTHONPATH=. python research/multi_asset_6way_kospi200.py
+      - run: PYTHONPATH=. python research/multi_asset_6way_kospi200_v2.py
       - uses: actions/upload-artifact@v4
         with:
           name: multi-asset-6way-kospi200-results
