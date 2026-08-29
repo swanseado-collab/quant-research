@@ -1,0 +1,28 @@
+name: Execution User Route KOFR
+on:
+  push:
+    branches: [eth-entry-backtest-20260828]
+    paths:
+      - 'research/execution_user_route_kofr.py'
+      - '.github/workflows/execution-user-route-kofr.yml'
+  workflow_dispatch:
+jobs:
+  oos:
+    strategy:
+      fail-fast: false
+      matrix:
+        notional: [100000000, 300000000, 1000000000]
+    runs-on: ubuntu-latest
+    env:
+      NOTIONAL: ${{ matrix.notional }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install pandas numpy requests tabulate yfinance
+      - run: PYTHONPATH=. python research/execution_user_route_kofr.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: user-route-kofr-${{ matrix.notional }}
+          path: results/execution_user_route_kofr/${{ matrix.notional }}
