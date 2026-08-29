@@ -15,7 +15,7 @@ jobs:
         with:
           python-version: '3.12'
       - run: pip install pandas numpy requests tabulate yfinance
-      - run: python research/multi_asset_6way_kospi200.py
+      - run: PYTHONPATH=. python research/multi_asset_6way_kospi200.py
       - uses: actions/upload-artifact@v4
         with:
           name: multi-asset-6way-kospi200-results
