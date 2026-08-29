@@ -15,6 +15,16 @@ jobs:
         with:
           python-version: '3.12'
       - run: pip install pandas numpy requests yfinance
+      - name: Normalize datetime precision
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('research/kospi200_long_trend_study.py')
+          s=p.read_text()
+          s=s.replace('d["date"] = pd.to_datetime(d["date"]).dt.tz_localize(None)', 'd["date"] = pd.to_datetime(d["date"]).dt.tz_localize(None).astype("datetime64[ns]")')
+          s=s.replace('x["available_date"] = x["obs_date"] + pd.Timedelta(days=45)', 'x["available_date"] = (x["obs_date"] + pd.Timedelta(days=45)).astype("datetime64[ns]")')
+          p.write_text(s)
+          PY
       - run: python research/kospi200_long_trend_study.py
       - uses: actions/upload-artifact@v4
         with:
