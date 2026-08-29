@@ -1,0 +1,28 @@
+name: KOSPI200 PyKRX Probe
+on:
+  push:
+    branches: [eth-entry-backtest-20260828]
+    paths:
+      - .github/workflows/kospi200-pykrx-probe.yml
+  workflow_dispatch:
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install pykrx pandas
+      - run: |
+          python - <<'PY'
+          from pykrx import stock
+          import pandas as pd
+          print('name', stock.get_index_ticker_name('1028'))
+          try:
+              d=stock.get_index_ohlcv('19900101','20260828','1028')
+          except Exception:
+              d=stock.get_index_ohlcv_by_date('19900101','20260828','1028')
+          print('rows',len(d),'start',d.index.min(),'end',d.index.max())
+          print(d.head().to_string())
+          print(d.tail(10).to_string())
+          PY
