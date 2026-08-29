@@ -1,0 +1,23 @@
+name: ETH Drift Robust Stage
+on:
+  push:
+    branches: [eth-entry-backtest-20260828]
+    paths:
+      - research/eth_drift_robust_stage.py
+      - .github/workflows/eth-drift-robust-stage.yml
+  workflow_dispatch:
+jobs:
+  research:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install pandas numpy requests tabulate yfinance
+      - run: PYTHONPATH=. python research/eth_drift_robust_stage.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: eth-drift-robust-stage-results
+          path: results/eth_drift_robust_stage
