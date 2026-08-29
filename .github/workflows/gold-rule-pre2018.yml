@@ -1,0 +1,21 @@
+name: Gold Rule Pre2018
+on:
+  push:
+    branches: [eth-entry-backtest-20260828]
+    paths:
+      - 'research/gold_rule_pre2018.py'
+      - '.github/workflows/gold-rule-pre2018.yml'
+jobs:
+  research:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install pandas numpy requests tabulate yfinance
+      - run: PYTHONPATH=. python research/gold_rule_pre2018.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: gold-rule-pre2018-results
+          path: results/gold_rule_pre2018
