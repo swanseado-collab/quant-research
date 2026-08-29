@@ -1,0 +1,22 @@
+name: BTC Drift Stress 6Asset
+on:
+  push:
+    branches: [eth-entry-backtest-20260828]
+    paths:
+      - research/btc_drift_stress_6asset.py
+      - .github/workflows/btc-drift-stress-6asset.yml
+  workflow_dispatch:
+jobs:
+  research:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install pandas numpy requests tabulate yfinance
+      - run: PYTHONPATH=. python research/btc_drift_stress_6asset.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: btc-drift-stress-6asset-results
+          path: results/btc_drift_stress_6asset
