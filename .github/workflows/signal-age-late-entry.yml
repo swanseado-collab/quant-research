@@ -1,0 +1,22 @@
+name: Signal Age Late Entry Study
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'research/signal_age_late_entry_study.py'
+      - '.github/workflows/signal-age-late-entry.yml'
+jobs:
+  study:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install pandas numpy requests yfinance tabulate
+      - name: Run study
+        run: PYTHONPATH=. python research/signal_age_late_entry_study.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: signal-age-late-entry-results
+          path: results/signal_age_late_entry
