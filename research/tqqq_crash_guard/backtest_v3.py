@@ -59,9 +59,18 @@ def simulate_v3(p: pd.DataFrame, cfg: V3, save_path=False):
             cash *= 1.0 + max(0.0, cash_y[i-1] / 100.0) / 252.0
 
         if pending_target is not None:
+            exec_reason = pending_reason
+            before_shares = shares
             cash, shares, avg_cost, notional, fee = execute_target(cash, shares, avg_cost, lev[i], pending_target)
             if abs(notional) > 1e-12:
-                trades.append((dates[i], pending_reason, pending_target, lev[i], notional, fee, cash, shares, avg_cost))
+                trades.append((dates[i], exec_reason, pending_target, lev[i], notional, fee, cash, shares, avg_cost))
+            # A completed +50% take-profit ends the current dip-buy cycle.
+            # Without this reset, later re-entry can be accidentally disabled because
+            # tier_used remains latched from the old cycle.
+            if before_shares > 0 and shares == 0 and exec_reason == "TP_50" and not red_mode:
+                cycle_peak = q[i]
+                entry_started = False
+                tier_used = [False] * len(ENTRY_DD)
         pending_target = None
         pending_reason = None
 
@@ -76,7 +85,6 @@ def simulate_v3(p: pd.DataFrame, cfg: V3, save_path=False):
         if red_signal:
             red_mode = True
 
-        # Take-profit remains active except when an immediate RED cut has priority.
         if red_mode:
             state_arr[i] = "RED"
             if red_signal and weight > cfg.red_target + 1e-6:
@@ -84,7 +92,6 @@ def simulate_v3(p: pd.DataFrame, cfg: V3, save_path=False):
                 pending_reason = "RED_cut"
                 continue
 
-            # Full regime release when QQQ regains its trend MA.
             if np.isfinite(trend[i]) and q[i] > trend[i]:
                 red_mode = False
                 cycle_peak = q[i]
@@ -92,7 +99,6 @@ def simulate_v3(p: pd.DataFrame, cfg: V3, save_path=False):
                 tier_used = [False] * len(ENTRY_DD)
                 continue
 
-            # Recovery ladder: allow partial risk before full release.
             if np.isfinite(rec_mid[i]) and q[i] > rec_mid[i]:
                 target = 0.60
                 if weight < target - 1e-6:
@@ -114,8 +120,7 @@ def simulate_v3(p: pd.DataFrame, cfg: V3, save_path=False):
             pending_reason = "TP_50"
             continue
 
-        # Core V3 change: YELLOW does NOT sell existing holdings.
-        # It only caps NEW dip-buy targets.
+        # YELLOW does not force-sell existing holdings. It only caps NEW dip buys.
         if not entry_started:
             cycle_peak = q[i] if not np.isfinite(cycle_peak) else max(cycle_peak, q[i])
 
@@ -192,7 +197,6 @@ def main():
         rows.append(summarize(cfg,eq,w,tr,actual_start))
     df=pd.DataFrame(rows)
 
-    # Candidate quality tiers. We explicitly preserve a return floor while tightening crash damage.
     tier_rows=[]
     for cap in (-.65,-.60,-.55,-.50,-.45,-.40):
         elig=df[(df.DotCom_MDD>=cap)&(df.MDD>=cap-.03)&(df.ActualEra_CAGR>=.18)]
@@ -201,12 +205,10 @@ def main():
             z["dotcom_cap"]=cap; tier_rows.append(z)
     tiers=pd.DataFrame(tier_rows)
 
-    # Broad score only for ranking candidate neighborhoods, not final selection.
     z=df.copy()
     z["score"]=4*z.CAGR + 2*z.ActualEra_CAGR + .8*z.DotCom_MDD + .4*z.GFC_MDD + .2*z["2022_Bear_MDD"]
     z=z.sort_values("score",ascending=False)
 
-    # Add rolling robustness metrics to a limited candidate set.
     candidate_names=list(dict.fromkeys(
         list(df.sort_values("CAGR",ascending=False).head(15).strategy)+
         (list(tiers.strategy) if len(tiers) else [])+
