@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - 'research/signal_age_late_entry_study.py'
+      - 'research/signal_age_late_entry_study_v2.py'
       - '.github/workflows/signal-age-late-entry.yml'
 jobs:
   study:
@@ -15,7 +16,7 @@ jobs:
           python-version: '3.12'
       - run: pip install pandas numpy requests yfinance tabulate
       - name: Run study
-        run: PYTHONPATH=. python research/signal_age_late_entry_study.py
+        run: PYTHONPATH=. python research/signal_age_late_entry_study_v2.py
       - uses: actions/upload-artifact@v4
         with:
           name: signal-age-late-entry-results
