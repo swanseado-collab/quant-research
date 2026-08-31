@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
   push:
     paths:
-      - 'research/tqqq_panic_buy_study.py'
+      - 'research/tqqq_panic_buy_study_v2.py'
       - '.github/workflows/tqqq-panic-buy-study.yml'
 jobs:
   study:
@@ -14,9 +14,9 @@ jobs:
         with:
           python-version: '3.12'
       - run: pip install pandas numpy yfinance
-      - name: Run study
-        run: PYTHONPATH=. python research/tqqq_panic_buy_study.py
+      - name: Run corrected study
+        run: PYTHONPATH=. python research/tqqq_panic_buy_study_v2.py
       - uses: actions/upload-artifact@v4
         with:
-          name: tqqq-panic-buy-results
-          path: results/tqqq_panic_buy
+          name: tqqq-panic-buy-v2-results
+          path: results/tqqq_panic_buy_v2
