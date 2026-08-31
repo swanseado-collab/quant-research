@@ -1,0 +1,22 @@
+name: TQQQ Panic Buy Study
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'research/tqqq_panic_buy_study.py'
+      - '.github/workflows/tqqq-panic-buy-study.yml'
+jobs:
+  study:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install pandas numpy yfinance
+      - name: Run study
+        run: PYTHONPATH=. python research/tqqq_panic_buy_study.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: tqqq-panic-buy-results
+          path: results/tqqq_panic_buy
