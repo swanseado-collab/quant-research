@@ -1,12 +1,12 @@
 name: TQQQ Crash Guard Research
 
-# V29: test V7 from fresh cash starts over completed rolling 20-year retirement-horizon windows.
+# V30: test 20-year monthly accumulation with cash reserve and fresh V7 crash/reversal deployment.
 on:
   push:
     branches:
       - tqqq-crash-guard-research
     paths:
-      - 'research/tqqq_crash_guard/backtest_v29_rolling_20y_fresh_start.py'
+      - 'research/tqqq_crash_guard/backtest_v30_rolling_20y_monthly_accumulation.py'
       - '.github/workflows/tqqq-crash-guard.yml'
   workflow_dispatch:
 
@@ -26,21 +26,21 @@ jobs:
           python-version: '3.12'
       - name: Install dependencies
         run: python -m pip install --quiet pandas numpy yfinance
-      - name: Run V29 rolling 20-year study
-        run: python research/tqqq_crash_guard/backtest_v29_rolling_20y_fresh_start.py
+      - name: Run V30 rolling 20-year monthly accumulation study
+        run: python research/tqqq_crash_guard/backtest_v30_rolling_20y_monthly_accumulation.py
       - name: Commit results to research branch
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add research/tqqq_crash_guard/results_v29_rolling_20y_fresh_start
+          git add research/tqqq_crash_guard/results_v30_rolling_20y_monthly_accumulation
           if git diff --cached --quiet; then
             echo 'No result changes to commit'
           else
-            git commit -m 'Add TQQQ V29 rolling 20-year results [skip ci]'
+            git commit -m 'Add TQQQ V30 monthly accumulation results [skip ci]'
             git push origin HEAD:tqqq-crash-guard-research
           fi
       - name: Upload results artifact
         uses: actions/upload-artifact@v4
         with:
-          name: tqqq-v29-rolling-20y-results
-          path: research/tqqq_crash_guard/results_v29_rolling_20y_fresh_start
+          name: tqqq-v30-monthly-accumulation-results
+          path: research/tqqq_crash_guard/results_v30_rolling_20y_monthly_accumulation
