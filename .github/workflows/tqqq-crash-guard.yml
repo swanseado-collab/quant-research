@@ -1,13 +1,12 @@
 name: TQQQ Crash Guard Research
 
-# V23: extend signal history to the pre-QQQ Nasdaq-100 index era and retest late-entry policies on more independent cycles.
-# Trigger marker: 2026-09-01 V23 validation run.
+# V24: all close-based late-entry add/exit signals execute at the next trading-day close.
 on:
   push:
     branches:
       - tqqq-crash-guard-research
     paths:
-      - 'research/tqqq_crash_guard/backtest_v23_ndx_history_extension.py'
+      - 'research/tqqq_crash_guard/backtest_v24_late_entry_early_exit.py'
       - '.github/workflows/tqqq-crash-guard.yml'
   workflow_dispatch:
 
@@ -27,21 +26,21 @@ jobs:
           python-version: '3.12'
       - name: Install dependencies
         run: python -m pip install --quiet pandas numpy yfinance
-      - name: Run V23 NDX history extension
-        run: python research/tqqq_crash_guard/backtest_v23_ndx_history_extension.py
+      - name: Run V24 corrected late-entry early-exit
+        run: python research/tqqq_crash_guard/backtest_v24_late_entry_early_exit.py
       - name: Commit results to research branch
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add research/tqqq_crash_guard/results_v23_ndx_extension
+          git add research/tqqq_crash_guard/results_v24_late_entry_early_exit
           if git diff --cached --quiet; then
             echo 'No result changes to commit'
           else
-            git commit -m 'Add TQQQ V23 NDX extension results [skip ci]'
+            git commit -m 'Add TQQQ V24 late-entry early-exit results [skip ci]'
             git push origin HEAD:tqqq-crash-guard-research
           fi
       - name: Upload results artifact
         uses: actions/upload-artifact@v4
         with:
-          name: tqqq-v23-ndx-extension-results
-          path: research/tqqq_crash_guard/results_v23_ndx_extension
+          name: tqqq-v24-late-entry-early-exit-results
+          path: research/tqqq_crash_guard/results_v24_late_entry_early_exit
