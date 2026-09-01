@@ -5,7 +5,7 @@ on:
     branches:
       - tqqq-crash-guard-research
     paths:
-      - 'research/tqqq_crash_guard/backtest_v16_sleeve_sizing.py'
+      - 'research/tqqq_crash_guard/backtest_v17_ratchet_harvest.py'
       - '.github/workflows/tqqq-crash-guard.yml'
   workflow_dispatch:
 
@@ -25,21 +25,21 @@ jobs:
           python-version: '3.12'
       - name: Install dependencies
         run: python -m pip install --quiet pandas numpy yfinance
-      - name: Run V16 tactical sleeve sizing
-        run: python research/tqqq_crash_guard/backtest_v16_sleeve_sizing.py
+      - name: Run V17 ratchet harvest
+        run: python research/tqqq_crash_guard/backtest_v17_ratchet_harvest.py
       - name: Commit results to research branch
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add research/tqqq_crash_guard/results_v16_sleeve_sizing
+          git add research/tqqq_crash_guard/results_v17_ratchet_harvest
           if git diff --cached --quiet; then
             echo 'No result changes to commit'
           else
-            git commit -m 'Add TQQQ V16 sleeve sizing results [skip ci]'
+            git commit -m 'Add TQQQ V17 ratchet harvest results [skip ci]'
             git push origin HEAD:tqqq-crash-guard-research
           fi
       - name: Upload results artifact
         uses: actions/upload-artifact@v4
         with:
-          name: tqqq-v16-sleeve-sizing-results
-          path: research/tqqq_crash_guard/results_v16_sleeve_sizing
+          name: tqqq-v17-ratchet-harvest-results
+          path: research/tqqq_crash_guard/results_v17_ratchet_harvest
