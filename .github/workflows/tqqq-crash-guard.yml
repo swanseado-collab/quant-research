@@ -1,12 +1,12 @@
 name: TQQQ Crash Guard Research
 
-# V21: late-stage bull adoption policies: partial join, pullback join, or wait for next crash.
+# V22: late-stage bull adoption ladder: small initial join, then add on shallow pullback.
 on:
   push:
     branches:
       - tqqq-crash-guard-research
     paths:
-      - 'research/tqqq_crash_guard/backtest_v21_late_join_policies.py'
+      - 'research/tqqq_crash_guard/backtest_v22_late_join_ladder.py'
       - '.github/workflows/tqqq-crash-guard.yml'
   workflow_dispatch:
 
@@ -26,21 +26,21 @@ jobs:
           python-version: '3.12'
       - name: Install dependencies
         run: python -m pip install --quiet pandas numpy yfinance
-      - name: Run V21 late join policies
-        run: python research/tqqq_crash_guard/backtest_v21_late_join_policies.py
+      - name: Run V22 late entry ladder
+        run: python research/tqqq_crash_guard/backtest_v22_late_join_ladder.py
       - name: Commit results to research branch
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add research/tqqq_crash_guard/results_v21_late_join_policies
+          git add research/tqqq_crash_guard/results_v22_late_join_ladder
           if git diff --cached --quiet; then
             echo 'No result changes to commit'
           else
-            git commit -m 'Add TQQQ V21 late-join policy results [skip ci]'
+            git commit -m 'Add TQQQ V22 late-entry ladder results [skip ci]'
             git push origin HEAD:tqqq-crash-guard-research
           fi
       - name: Upload results artifact
         uses: actions/upload-artifact@v4
         with:
-          name: tqqq-v21-late-join-policy-results
-          path: research/tqqq_crash_guard/results_v21_late_join_policies
+          name: tqqq-v22-late-entry-ladder-results
+          path: research/tqqq_crash_guard/results_v22_late_join_ladder
