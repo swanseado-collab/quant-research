@@ -1,5 +1,6 @@
 name: TQQQ Crash Guard Research
 
+# V18: test the fixed V7 tactical campaign on multiple strategic US-equity core proxies.
 on:
   push:
     branches:
