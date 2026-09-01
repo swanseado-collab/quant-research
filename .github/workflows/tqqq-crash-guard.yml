@@ -5,7 +5,7 @@ on:
     branches:
       - tqqq-crash-guard-research
     paths:
-      - 'research/tqqq_crash_guard/backtest_v15_cycle_and_synth_stress.py'
+      - 'research/tqqq_crash_guard/backtest_v16_sleeve_sizing.py'
       - '.github/workflows/tqqq-crash-guard.yml'
   workflow_dispatch:
 
@@ -25,21 +25,21 @@ jobs:
           python-version: '3.12'
       - name: Install dependencies
         run: python -m pip install --quiet pandas numpy yfinance
-      - name: Run V15 cycle and synthetic stress
-        run: python research/tqqq_crash_guard/backtest_v15_cycle_and_synth_stress.py
+      - name: Run V16 tactical sleeve sizing
+        run: python research/tqqq_crash_guard/backtest_v16_sleeve_sizing.py
       - name: Commit results to research branch
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add research/tqqq_crash_guard/results_v15_cycle_synth_stress
+          git add research/tqqq_crash_guard/results_v16_sleeve_sizing
           if git diff --cached --quiet; then
             echo 'No result changes to commit'
           else
-            git commit -m 'Add TQQQ V15 cycle and synthetic stress results [skip ci]'
+            git commit -m 'Add TQQQ V16 sleeve sizing results [skip ci]'
             git push origin HEAD:tqqq-crash-guard-research
           fi
       - name: Upload results artifact
         uses: actions/upload-artifact@v4
         with:
-          name: tqqq-v15-cycle-synthetic-stress-results
-          path: research/tqqq_crash_guard/results_v15_cycle_synth_stress
+          name: tqqq-v16-sleeve-sizing-results
+          path: research/tqqq_crash_guard/results_v16_sleeve_sizing
