@@ -21,6 +21,8 @@ jobs:
         run: python run_strategy_grid.py
       - name: Run long horizon audit
         run: python long_horizon_audit.py
+      - name: Run regime adaptive research
+        run: python regime_adaptive_research.py
       - name: Print grid highlights
         run: |
           echo '=== GRID TOP RETURN ==='
@@ -30,15 +32,17 @@ jobs:
           c=['strategy','med_cagr3','med_cagr5','med_mdd3','med_mdd5','p25_ret3','p25_ret5','loss_rate3','loss_rate5','bh_win_rate3','bh_win_rate5','calmar_like']
           print(d[d.reserve>0].nlargest(20,'avg_med_cagr')[c].to_csv(index=False))
           print('=== LONG HORIZON SUMMARY ===')
-          x=pd.read_csv('results_long/long_horizon_summary.csv')
-          print(x.to_csv(index=False))
-          print('=== FULL PERIOD LONG STRATEGY COMPARISON ===')
-          print(pd.read_csv('results_long/full_period_comparison.csv').to_csv(index=False))
+          print(pd.read_csv('results_long/long_horizon_summary.csv').to_csv(index=False))
+          print('=== REGIME PERIOD COMPARISON ===')
+          print(pd.read_csv('results_regime/period_comparison.csv').to_csv(index=False))
+          print('=== REGIME START SUMMARY ===')
+          print(pd.read_csv('results_regime/start_regime_1y_summary.csv').to_csv(index=False))
           PY
       - uses: actions/upload-artifact@v4
         with:
-          name: hynix-long-horizon-results
+          name: hynix-regime-adaptive-results
           path: |
             results/
             results_grid/
             results_long/
+            results_regime/
