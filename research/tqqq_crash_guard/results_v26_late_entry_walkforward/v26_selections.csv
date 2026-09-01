@@ -1,0 +1,3 @@
+test_campaign,train_campaigns,train_obs,selected_policy,selected_form,selected_exit_ma,selected_slope_lb,train_CAGR_Median,train_CAGR_Min,train_MDD_Worst
+2002-12-12,1,100,I50_XMA100_S10,I50,100,10,0.0950784943528895,0.0950784943528895,0.0
+2009-04-22,2,500,L25_50_PB5_XMA120_S10,L25_50_PB5,120,10,0.0469771834201169,-0.0067564095960589,-0.2675550152421877
