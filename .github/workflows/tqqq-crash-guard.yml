@@ -1,6 +1,7 @@
 name: TQQQ Crash Guard Research
 
 # V23: extend signal history to the pre-QQQ Nasdaq-100 index era and retest late-entry policies on more independent cycles.
+# Trigger marker: 2026-09-01 V23 validation run.
 on:
   push:
     branches:
