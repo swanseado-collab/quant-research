@@ -21,12 +21,10 @@ def yf_series(ticker: str, start="2025-01-01", end=END, adjusted=True):
     if d is None or len(d) == 0:
         raise RuntimeError(f"No Yahoo data for {ticker}")
     if isinstance(d.columns, pd.MultiIndex):
-        # Recent yfinance may return (field, ticker) MultiIndex even for one symbol.
         field = "Adj Close" if adjusted and ("Adj Close", ticker) in d.columns else "Close"
         if (field, ticker) in d.columns:
             s = d[(field, ticker)]
         else:
-            # fallback: first matching field at level 0
             cols = [c for c in d.columns if c[0] == field]
             if not cols:
                 field = "Close"
@@ -98,7 +96,8 @@ def main():
     else:
         fresh["cash_yield_pct"] = float(frozen.cash_yield_pct.iloc[-1])
     fresh["price_source"] = "actual_live"
-    extra = fresh.reset_index().rename(columns={"index": "date"})
+    extra = fresh.reset_index()
+    extra = extra.rename(columns={extra.columns[0]: "date"})
 
     cols = ["date", "qqq", "tqqq", "price_source", "cash_yield_pct"]
     p = pd.concat([frozen[cols], extra[cols]], ignore_index=True).sort_values("date").drop_duplicates("date", keep="last")
@@ -121,8 +120,10 @@ def main():
     oos_start = frozen_last + pd.Timedelta(days=1)
     latest_date = pd.Timestamp(latest.date)
     strat_ret, strat_cagr, strat_mdd = slice_stats(eq, oos_start, latest_date)
-    qret = float(p.loc[p.date >= oos_start, "qqq"].iloc[-1] / p.loc[p.date >= oos_start, "qqq"].iloc[0] - 1)
-    tret = float(p.loc[p.date >= oos_start, "tqqq"].iloc[-1] / p.loc[p.date >= oos_start, "tqqq"].iloc[0] - 1)
+    qz = p.loc[p.date >= oos_start, "qqq"]
+    tz = p.loc[p.date >= oos_start, "tqqq"]
+    qret = float(qz.iloc[-1] / qz.iloc[0] - 1)
+    tret = float(tz.iloc[-1] / tz.iloc[0] - 1)
 
     live_tr = tr[tr.date > frozen_last].copy() if len(tr) else tr.copy()
     state = str(path.iloc[-1].state)
