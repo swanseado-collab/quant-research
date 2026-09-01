@@ -5,7 +5,7 @@ on:
     branches:
       - tqqq-crash-guard-research
     paths:
-      - 'research/tqqq_crash_guard/backtest_v13_validation.py'
+      - 'research/tqqq_crash_guard/backtest_v14_live_extension.py'
       - '.github/workflows/tqqq-crash-guard.yml'
   workflow_dispatch:
 
@@ -24,22 +24,22 @@ jobs:
         with:
           python-version: '3.12'
       - name: Install dependencies
-        run: python -m pip install --quiet pandas numpy
-      - name: Run V13 validation
-        run: python research/tqqq_crash_guard/backtest_v13_validation.py
+        run: python -m pip install --quiet pandas numpy yfinance
+      - name: Run V14 live extension
+        run: python research/tqqq_crash_guard/backtest_v14_live_extension.py
       - name: Commit results to research branch
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add research/tqqq_crash_guard/results_v13_validation
+          git add research/tqqq_crash_guard/results_v14_live_extension
           if git diff --cached --quiet; then
             echo 'No result changes to commit'
           else
-            git commit -m 'Add TQQQ V13 validation results [skip ci]'
+            git commit -m 'Add TQQQ V14 live extension results [skip ci]'
             git push origin HEAD:tqqq-crash-guard-research
           fi
       - name: Upload results artifact
         uses: actions/upload-artifact@v4
         with:
-          name: tqqq-v13-validation-results
-          path: research/tqqq_crash_guard/results_v13_validation
+          name: tqqq-v14-live-extension-results
+          path: research/tqqq_crash_guard/results_v14_live_extension
