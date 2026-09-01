@@ -19,6 +19,8 @@ jobs:
         run: python hynix_ci.py
       - name: Run accumulation strategy grid
         run: python run_strategy_grid.py
+      - name: Run long horizon audit
+        run: python long_horizon_audit.py
       - name: Print grid highlights
         run: |
           echo '=== GRID TOP RETURN ==='
@@ -27,25 +29,16 @@ jobs:
           d=pd.read_csv('results_grid/all_864_strategies.csv')
           c=['strategy','med_cagr3','med_cagr5','med_mdd3','med_mdd5','p25_ret3','p25_ret5','loss_rate3','loss_rate5','bh_win_rate3','bh_win_rate5','calmar_like']
           print(d[d.reserve>0].nlargest(20,'avg_med_cagr')[c].to_csv(index=False))
-          print('=== GRID TOP RISK ADJUSTED ===')
-          print(d[d.reserve>0].nlargest(20,'calmar_like')[c].to_csv(index=False))
-          print('=== HOLD ENTRY COMPARISON ===')
-          h=pd.read_csv('results_grid/entry_reserve_hold_comparison.csv')
-          print(h[['strategy','med_cagr3','med_cagr5','med_mdd3','med_mdd5','loss_rate3','loss_rate5']].to_csv(index=False))
-          print('=== FACTOR EXIT ===')
-          print(pd.read_csv('results_grid/factor_exit.csv').to_csv(index=False))
-          print('=== FACTOR TREND ===')
-          print(pd.read_csv('results_grid/factor_trend.csv').to_csv(index=False))
-          print('=== CURRENT LIKE 3Y ===')
-          q=pd.read_csv('results_grid/current_like_finalist_summary.csv')
-          print(q[q.years==3].sort_values('med_ret',ascending=False).head(20).to_csv(index=False))
-          print('=== REENTRY SENSITIVITY ===')
-          r=pd.read_csv('results_grid/reentry_sensitivity.csv')
-          print(r.sort_values(['strategy','reentry_drop'])[['strategy','reentry_drop','med_cagr3','med_cagr5','med_mdd3','med_mdd5']].to_csv(index=False))
+          print('=== LONG HORIZON SUMMARY ===')
+          x=pd.read_csv('results_long/long_horizon_summary.csv')
+          print(x.to_csv(index=False))
+          print('=== FULL PERIOD LONG STRATEGY COMPARISON ===')
+          print(pd.read_csv('results_long/full_period_comparison.csv').to_csv(index=False))
           PY
       - uses: actions/upload-artifact@v4
         with:
-          name: hynix-strategy-grid-results
+          name: hynix-long-horizon-results
           path: |
             results/
             results_grid/
+            results_long/
