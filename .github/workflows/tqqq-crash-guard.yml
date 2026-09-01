@@ -1,12 +1,12 @@
 name: TQQQ Crash Guard Research
 
-# V28: translate late-entry tactical rules into whole-portfolio risk at several tactical budget sizes.
+# V29: test V7 from fresh cash starts over completed rolling 20-year retirement-horizon windows.
 on:
   push:
     branches:
       - tqqq-crash-guard-research
     paths:
-      - 'research/tqqq_crash_guard/backtest_v28_late_entry_portfolio_budget.py'
+      - 'research/tqqq_crash_guard/backtest_v29_rolling_20y_fresh_start.py'
       - '.github/workflows/tqqq-crash-guard.yml'
   workflow_dispatch:
 
@@ -26,21 +26,21 @@ jobs:
           python-version: '3.12'
       - name: Install dependencies
         run: python -m pip install --quiet pandas numpy yfinance
-      - name: Run V28 portfolio budget
-        run: python research/tqqq_crash_guard/backtest_v28_late_entry_portfolio_budget.py
+      - name: Run V29 rolling 20-year study
+        run: python research/tqqq_crash_guard/backtest_v29_rolling_20y_fresh_start.py
       - name: Commit results to research branch
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add research/tqqq_crash_guard/results_v28_late_entry_portfolio_budget
+          git add research/tqqq_crash_guard/results_v29_rolling_20y_fresh_start
           if git diff --cached --quiet; then
             echo 'No result changes to commit'
           else
-            git commit -m 'Add TQQQ V28 late-entry portfolio budget results [skip ci]'
+            git commit -m 'Add TQQQ V29 rolling 20-year results [skip ci]'
             git push origin HEAD:tqqq-crash-guard-research
           fi
       - name: Upload results artifact
         uses: actions/upload-artifact@v4
         with:
-          name: tqqq-v28-late-entry-portfolio-budget-results
-          path: research/tqqq_crash_guard/results_v28_late_entry_portfolio_budget
+          name: tqqq-v29-rolling-20y-results
+          path: research/tqqq_crash_guard/results_v29_rolling_20y_fresh_start
