@@ -1,12 +1,12 @@
 name: TQQQ Crash Guard Research
 
-# V27: replace one optimized MA/slope exit with an ensemble vote across nearby long-trend rules.
+# V28: translate late-entry tactical rules into whole-portfolio risk at several tactical budget sizes.
 on:
   push:
     branches:
       - tqqq-crash-guard-research
     paths:
-      - 'research/tqqq_crash_guard/backtest_v27_late_entry_ensemble_exit.py'
+      - 'research/tqqq_crash_guard/backtest_v28_late_entry_portfolio_budget.py'
       - '.github/workflows/tqqq-crash-guard.yml'
   workflow_dispatch:
 
@@ -26,21 +26,21 @@ jobs:
           python-version: '3.12'
       - name: Install dependencies
         run: python -m pip install --quiet pandas numpy yfinance
-      - name: Run V27 ensemble late-entry exit
-        run: python research/tqqq_crash_guard/backtest_v27_late_entry_ensemble_exit.py
+      - name: Run V28 portfolio budget
+        run: python research/tqqq_crash_guard/backtest_v28_late_entry_portfolio_budget.py
       - name: Commit results to research branch
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add research/tqqq_crash_guard/results_v27_late_entry_ensemble
+          git add research/tqqq_crash_guard/results_v28_late_entry_portfolio_budget
           if git diff --cached --quiet; then
             echo 'No result changes to commit'
           else
-            git commit -m 'Add TQQQ V27 ensemble late-entry results [skip ci]'
+            git commit -m 'Add TQQQ V28 late-entry portfolio budget results [skip ci]'
             git push origin HEAD:tqqq-crash-guard-research
           fi
       - name: Upload results artifact
         uses: actions/upload-artifact@v4
         with:
-          name: tqqq-v27-ensemble-late-entry-results
-          path: research/tqqq_crash_guard/results_v27_late_entry_ensemble
+          name: tqqq-v28-late-entry-portfolio-budget-results
+          path: research/tqqq_crash_guard/results_v28_late_entry_portfolio_budget
