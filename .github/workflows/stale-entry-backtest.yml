@@ -1,0 +1,27 @@
+name: stale-entry-backtest
+on:
+  push:
+    branches: [stale-entry-backtest-20260901]
+    paths-ignore:
+      - 'results/**'
+permissions:
+  contents: write
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install dependencies
+        run: pip install -q pandas numpy tabulate
+      - name: Run backtest
+        run: python stale_entry_backtest.py
+      - name: Commit results
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add results/stale_entry_20260901
+          git commit -m "Add stale-entry backtest results" || exit 0
+          git push
